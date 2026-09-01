@@ -132,22 +132,26 @@ class SimulationLauncher(tk.Tk):
             log, path = run_simulation(duration, target_speed, radius)
             import matplotlib.pyplot as plt
 
+            output_dir = APP_DIR / "artifacts"
+            image_path = output_dir / "latest_demo.png"
+            csv_path = output_dir / "latest_demo.csv"
+            log.to_csv(csv_path)
             if self.figure is not None:
                 plt.close(self.figure)
-            output_path = APP_DIR / "artifacts" / "latest_demo.png"
             self.figure, _ = plot_simulation(
                 log,
                 path=path,
-                save_path=output_path,
+                save_path=image_path,
                 show=False,
             )
             self.figure.show()
             data = log.as_dict()
             rms_error = float(np.sqrt(np.mean(data["cross_track_error"] ** 2)))
+            max_slip = float(np.max(np.abs(data["slip_ratio"])))
             self.status_var.set(
-                f"完成：最终速度 {data['v_x'][-1]:.3f} m/s，"
-                f"横向误差 RMS {rms_error:.3f} m\n"
-                f"结果已保存到：{output_path}"
+                f"完成：步数 {len(log)}，最终速度 {data['v_x'][-1]:.3f} m/s，"
+                f"横向误差 RMS {rms_error:.3f} m，最大滑移率 {max_slip:.3f}\n"
+                f"图片：{image_path}\nCSV：{csv_path}"
             )
         except Exception as error:
             self.status_var.set("仿真失败，请检查输入参数。")

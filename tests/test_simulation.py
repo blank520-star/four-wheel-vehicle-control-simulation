@@ -11,7 +11,7 @@ from vehicle_sim import (
 from vehicle_sim.scenarios import make_circle_path
 
 
-def test_closed_loop_run_produces_finite_log() -> None:
+def test_closed_loop_run_produces_finite_log(tmp_path) -> None:
     params = VehicleParams(initial_speed=0.5)
     path = make_circle_path(radius=15.0, count=120)
     vehicle = FourWheelVehicle(
@@ -37,3 +37,9 @@ def test_closed_loop_run_produces_finite_log() -> None:
     assert len(log) == 200
     assert np.all(np.isfinite(data["x"]))
     assert np.all(np.isfinite(data["wheel_torque"]))
+
+    csv_path = tmp_path / "run.csv"
+    assert log.to_csv(csv_path) == csv_path
+    csv_header = csv_path.read_text().splitlines()[0]
+    assert "wheel_speed_fl" in csv_header
+    assert "slip_ratio_rr" in csv_header

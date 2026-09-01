@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import csv
 from dataclasses import dataclass, field
+from pathlib import Path
 
 import numpy as np
 
@@ -72,6 +74,41 @@ class SimulationLog:
         for key in self._records[0]:
             result[key] = np.asarray([record[key] for record in self._records])
         return result
+
+    def to_csv(self, file_path: str | Path) -> Path:
+        """Write scalar and four-wheel log values to a CSV file."""
+
+        data = self.as_dict()
+        if not data:
+            raise ValueError("cannot export an empty simulation log")
+
+        wheel_names = ("fl", "fr", "rl", "rr")
+        scalar_keys: list[str] = []
+        wheel_keys: list[str] = []
+        for key, values in data.items():
+            values = np.asarray(values)
+            if values.ndim == 1:
+                scalar_keys.append(key)
+            elif values.ndim == 2 and values.shape[1] == 4:
+                wheel_keys.append(key)
+            else:
+                raise ValueError(f"unsupported log shape for {key}: {values.shape}")
+
+        fieldnames = scalar_keys + [
+            f"{key}_{wheel}" for key in wheel_keys for wheel in wheel_names
+        ]
+        output = Path(file_path)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        with output.open("w", newline="") as stream:
+            writer = csv.DictWriter(stream, fieldnames=fieldnames)
+            writer.writeheader()
+            for index in range(len(self._records)):
+                row = {key: float(data[key][index]) for key in scalar_keys}
+                for key in wheel_keys:
+                    for wheel_index, wheel in enumerate(wheel_names):
+                        row[f"{key}_{wheel}"] = float(data[key][index, wheel_index])
+                writer.writerow(row)
+        return output
 
 
 class ClosedLoopSimulator:
