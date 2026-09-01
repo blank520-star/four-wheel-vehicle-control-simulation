@@ -24,6 +24,16 @@ release/FourWheelVehicleSimulation.exe
 
 双击该文件后，在窗口中设置仿真时长、目标速度和圆形路径半径，点击“运行仿真”即可。结果图片会保存到 exe 同目录下的 `artifacts/latest_demo.png`。
 
+启动器采用面向调试的单窗口布局：左侧是工况参数和操作按钮，中间提供“实时波形”和“轨迹与轮胎”两个数据视图，右侧显示速度、跟踪误差、滑移率、横摆角速度和四轮末状态，底部保留运行日志。波形工具栏支持平移、缩放和保存。
+
+每次运行还会自动保存：
+
+```text
+artifacts/latest_demo.csv
+artifacts/latest_wave.png
+artifacts/latest_analysis.png
+```
+
 ## 当前已实现
 
 - 四轮平面动力学模型：车身纵向、横向和横摆运动，以及四轮独立轮速状态；
