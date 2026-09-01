@@ -19,6 +19,10 @@ plot = [
 test = [
     "pytest>=7.0",
 ]
+app = [
+    "matplotlib>=3.7",
+    "pyinstaller>=6.0",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]

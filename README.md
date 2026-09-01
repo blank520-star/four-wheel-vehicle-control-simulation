@@ -14,6 +14,16 @@ py -3 -m pytest
 
 示例会运行一个圆形路径闭环仿真，并输出最终速度和横向误差 RMS。绘图依赖 Matplotlib，核心车辆模型和测试只依赖 NumPy。
 
+## Windows 一键启动
+
+如果只想双击运行，可以执行仓库根目录下的 `build_windows_exe.ps1`。脚本会自动安装打包依赖，并生成：
+
+```text
+release/FourWheelVehicleSimulation.exe
+```
+
+双击该文件后，在窗口中设置仿真时长、目标速度和圆形路径半径，点击“运行仿真”即可。结果图片会保存到 exe 同目录下的 `artifacts/latest_demo.png`。
+
 ## 当前已实现
 
 - 四轮平面动力学模型：车身纵向、横向和横摆运动，以及四轮独立轮速状态；

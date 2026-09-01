@@ -7,5 +7,6 @@ venv/
 build/
 dist/
 artifacts/
+release/artifacts/
 .mypy_cache/
 .ruff_cache/
